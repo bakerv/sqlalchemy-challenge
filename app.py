@@ -41,7 +41,7 @@ def home():
         f"/api/v1.0/startdate/enddate <br/>"
         )
 
-@app.route("/api/v1.0/precipiation")
+@app.route("/api/v1.0/precipitation")
 def precipitation():
     """Return all precipitaion data in a list of dictionaries. 
     Uses the date as the key, and precipiation amount as the value"""
@@ -49,36 +49,32 @@ def precipitation():
 
 
 
-#@app.route("/api/v1.0/stations")
-#def stations():
-    return(
-        f""
-        f""
-        f""
-    )
+@app.route("/api/v1.0/stations")
+def stations():
+    return(session.query(Station.station))
 
 #@app.route("/api/v1.0/tobs")
 #def stations():
-    return(
-        f""
-        f""
-        f""
-    )
+    # return(
+       # f""
+      #  f""
+     #   f""
+   # )
 
 #@app.route("/api/v1.0/<start>")
 #def stations():
-    return(
-        f""
-        f""
-        f""
-    )
+    #return(
+       # f""
+      #  f""
+     #   f""
+    #)
 
-@app.route("/api/v1.0/<start>/<end>")
-def stations():
-    return(
-        f""
-        f""
-        f""
-    )
+#@app.route("/api/v1.0/<start>/<end>")
+#def stations():
+   # return(
+    #    f""
+     #   f""
+      #  f""
+    #)
 if __name__ == '__main__':
     app.run(debug=True)
