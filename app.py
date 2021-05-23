@@ -19,6 +19,15 @@ session = Session(engine)
 Measurement = Base.classes.measurement
 Station = Base.classes.station
 
+# Create rainfall dictionary
+rainfall = pd.read_sql("""
+SELECT date AS Date, prcp As Precipitation
+FROM measurement 
+WHERE Date > DATE('2016-08-23')
+ORDER BY Date ASC;""",con = engine).dropna()
+rainfalldict = {}
+for rows in rainfall.itertuples():
+    rainfalldict[rows[0]] = ({rows[1]:rows[2]})
 
 @app.route("/")
 def home():
@@ -36,14 +45,9 @@ def home():
 def precipitation():
     """Return all precipitaion data in a list of dictionaries. 
     Uses the date as the key, and precipiation amount as the value"""
+    return(jsonify(rainfalldict))
 
-    rainfall = pd.read_sql("""
-SELECT date AS Date, prcp As Precipitation
-FROM measurement 
-WHERE Date > DATE('2016-08-23')
-ORDER BY Date ASC;""",con = engine)
-  
-    return(rainfall.T.to_json(orient='records'))
+
 
 #@app.route("/api/v1.0/stations")
 #def stations():
