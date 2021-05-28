@@ -47,7 +47,7 @@ ORDER BY Date ASC;""",con = engine).dropna()
     rainfalldict = {}
     for rows in rainfall.itertuples():
         rainfalldict[rows[0]] = ({rows[1]:rows[2]})
-    return(jsonify([rainfalldict]))
+    return(jsonify(rainfalldict))
 
 
 
@@ -70,31 +70,39 @@ def tobs():
 
     with engine.connect() as data:
         previous_year = data.execute("""
-        SELECT date, prcp
+        SELECT date AS Date, tobs AS Temperature
         FROM measurement
         WHERE date > DATE('2016-08-23') and station = :ma"""
         , {'ma':mostactive[0]}).all()    
     return(jsonify([dict(row) for row in previous_year]))
-    # return(
-       # f""
-      #  f""
-     #   f""
-   # )
 
-#@app.route("/api/v1.0/<start>")
-#def stations():
-    #return(
-       # f""
-      #  f""
-     #   f""
-    #)
+@app.route("/api/v1.0/<start>")
+def start(start):
+    with engine.connect() as data:
+        tobs_stats = data.execute("""
+        SELECT MIN(tobs) AS Temperature_Minimum,
+        MAX(tobs) AS Temperature_Maximum,
+        ROUND(AVG(tobs),0) AS Temperature_Average,
+        MIN(date) AS Date_Beginning, MAX(date) AS Date_Ending
+        FROM measurement
+        WHERE date > :start"""
+        , {'start':start}).all()
+
+
+    return(jsonify([dict(row) for row in tobs_stats]))
+
 
 #@app.route("/api/v1.0/<start>/<end>")
-#def stations():
-   # return(
-    #    f""
-     #   f""
-      #  f""
-    #)
+def start_end(start,end):
+    with engine.connect() as data:
+        tobs_stats = data.execute("""
+        SELECT MIN(tobs) AS Temperature_Minimum,
+        MAX(tobs) AS Temperature_Maximum,
+        ROUND(AVG(tobs),0) AS Temperature_Average,
+        MIN(date) AS Date_Beginning, MAX(date) AS Date_Ending
+        FROM measurement
+        WHERE date >= :start AND date <= END"""
+        , {'start':start}).all()
+
 if __name__ == "__main__":
     app.run(debug=True)
