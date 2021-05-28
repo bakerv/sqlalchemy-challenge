@@ -92,17 +92,17 @@ def start(start):
     return(jsonify([dict(row) for row in tobs_stats]))
 
 
-#@app.route("/api/v1.0/<start>/<end>")
+@app.route("/api/v1.0/<start>/<end>")
 def start_end(start,end):
     with engine.connect() as data:
-        tobs_stats = data.execute("""
+        tobs_stats_se = data.execute("""
         SELECT MIN(tobs) AS Temperature_Minimum,
         MAX(tobs) AS Temperature_Maximum,
         ROUND(AVG(tobs),0) AS Temperature_Average,
         MIN(date) AS Date_Beginning, MAX(date) AS Date_Ending
         FROM measurement
-        WHERE date >= :start AND date <= END"""
-        , {'start':start}).all()
-
+        WHERE date >= :start AND date <= :end """
+        , {'start':start,'end':end}).all()
+    return(jsonify([dict(row) for row in tobs_stats_se]))
 if __name__ == "__main__":
     app.run(debug=True)
