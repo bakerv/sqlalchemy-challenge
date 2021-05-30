@@ -50,8 +50,6 @@ def precipitation():
         rainfalldict[rows[0]] = ({rows[1]:rows[2]})
     return(jsonify(rainfalldict))
 
-
-
 @app.route("/api/v1.0/stations")
 def stations():
     station_list = session.query(Station.station).all()
@@ -75,6 +73,7 @@ def tobs():
         FROM measurement
         WHERE date > DATE('2016-08-23') and station = :ma;"""
         , {'ma':mostactive[0]}).all()    
+
     return(jsonify([dict(row) for row in previous_year]))
 
 @app.route("/api/v1.0/<start>")
@@ -90,9 +89,7 @@ def start(start):
         WHERE date > :start;"""
         , {'start':start}).all()
 
-
     return(jsonify([dict(row) for row in tobs_stats]))
-
 
 @app.route("/api/v1.0/<start>/<end>")
 def start_end(start,end):
@@ -108,5 +105,6 @@ def start_end(start,end):
         , {'start':start,'end':end}).all()
 
     return(jsonify([dict(row) for row in tobs_stats_se]))
+    
 if __name__ == "__main__":
     app.run(debug=True)
