@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 import pandas as pd
-from sqlalchemy import create_engine,inspect,func
+from sqlalchemy import create_engine
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 import pandas as pd
@@ -16,12 +16,9 @@ Base.prepare(engine,reflect = True)
 # initialize the query tool
 session = Session(engine)
 
-# Create classes for each data table
+# Create data tables with auto generated classes
 Measurement = Base.classes.measurement
 Station = Base.classes.station
-
-# Create rainfall dictionary
-
 
 @app.route("/")
 def home():
@@ -39,15 +36,20 @@ def home():
 def precipitation():
     """Return all precipitaion data in a list of dictionaries. 
     Uses the date as the key, and precipiation amount as the value"""
+
+    # Query sqlite file to generate dataframe with precipitation data
     rainfall = pd.read_sql("""
     SELECT date AS Date, prcp As Precipitation
     FROM measurement 
     WHERE Date > DATE('2016-08-23')
     ORDER BY Date ASC;""",con = engine).dropna()
 
+    # Create rainfall dictionary
     rainfalldict = {}
     for rows in rainfall.itertuples():
         rainfalldict[rows[0]] = ({rows[1]:rows[2]})
+    
+    #Return the results of the query in JSON format
     return(jsonify(rainfalldict))
 
 @app.route("/api/v1.0/stations")
