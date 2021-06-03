@@ -11,4 +11,4 @@ Code to return a simple API request
 
 Results for the api call:
 /api/v1.0/2017-01-01/2017-01-13
-![API Data Sample]()
+![API Data Sample](https://github.com/bakerv/sqlalchemy-challenge/blob/main/Images/API_Data_Sample.PNG)
